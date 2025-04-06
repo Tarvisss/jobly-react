@@ -104,8 +104,7 @@ const BASE_URL ="http://localhost:3001";
   static async fetchJob(jobId) {
     try {
         let data = await this.request(`jobs/${jobId}`);
-        console.log("Fetched job data:", data);  // Check what data is returned
-        return data.job;  // Return the job data
+        return data.job;
     } catch (error) {
         console.log("Error fetching job:", error);
     }

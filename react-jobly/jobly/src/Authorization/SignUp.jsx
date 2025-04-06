@@ -2,8 +2,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from "react";
 import JoblyApi from "../api";
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
+    const navigate = useNavigate();
     // set initial state 
     const [formState, setFormState] = useState({
         username: "",
@@ -31,6 +33,8 @@ const handleSignup = async (e) => {
     if (signupResponse) {
         localStorage.setItem("authToken", signupResponse.token);
     }
+    //send the new user to the jobs page
+    navigate("/jobs");
 }
 
     return (

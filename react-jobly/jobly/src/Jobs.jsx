@@ -34,7 +34,7 @@ useEffect(() => {
                     {/* //here i've added a link to a single job page based off of the id. */}
                         <Link to={`/jobs/${jobs.id}`}>{jobs.title}</Link>
                         <p>Company: {jobs.companyName}</p>
-                        <p>Salary: {jobs.salary}</p>
+                        <p>Salary: {jobs.salary=== "0" || jobs.salary === null ? "Not Listed" : jobs.salary}</p>
                         <p>Equity: {jobs.equity === "0" || jobs.equity === null ? "none" : jobs.equity}</p>
                     </div>
                 ))

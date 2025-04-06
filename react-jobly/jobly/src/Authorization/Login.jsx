@@ -1,10 +1,12 @@
-import axios from "axios";
+
 import React, { useState } from "react";
 import JoblyApi from "../api";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { redirect, useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const navigate = useNavigate();
     const [formState, setFormState] = useState({ username: "", password: ""})
 
     const handlePassWordChange = (e) => {
@@ -19,10 +21,16 @@ const Login = () => {
         e.preventDefault();
         const {username, password} = formState;
         const loggedIntoken = await JoblyApi.LoginUser(username,password);
-//save token to local storage if recieved
+//save token to local storage if user successfully logs in
         if (loggedIntoken) {
-            localStorage.setItem("authToken", signupResponse.token);
+            localStorage.setItem("authToken", loggedIntoken.token);
+            navigate("/jobs");
+        } else {
+            redirect("/login")
+            alert("Incorrect Credentials")
         }
+// send user to the jobs page after logging in.
+        
     }
     return (
         <div>
