@@ -1,12 +1,14 @@
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import JoblyApi from "../api";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import UserContext from "./UserContext";
 
 const Login = () => {
     const navigate = useNavigate();
+    const {setCurrentUser} = useContext(UserContext)
     const [formState, setFormState] = useState({ username: "", password: ""})
 
     const handlePassWordChange = (e) => {
@@ -21,16 +23,14 @@ const Login = () => {
         e.preventDefault();
         const {username, password} = formState;
         const loggedInToken = await JoblyApi.LoginUser(username,password);
-        
+
 //save token to local storage if user successfully logs in
 if (loggedInToken) {
     const userData = {
       authToken: loggedInToken,  // Store the token
       username: username,        // Store the username
     };
-  
-    // Debugging: Log the userData being saved
-    console.log("Saving to localStorage:", userData);
+    setCurrentUser(userData);
   
     // Save the user data as a stringified JSON object
     localStorage.setItem("currUser", JSON.stringify(userData));
@@ -39,12 +39,11 @@ if (loggedInToken) {
     navigate("/jobs");
   } else {
     alert("Incorrect Credentials");
-    redirect("/login");
   }
   
 // send user to the jobs page after logging in.
         
-    }
+}
     return (
         <div>
              <h1>Please Login</h1>

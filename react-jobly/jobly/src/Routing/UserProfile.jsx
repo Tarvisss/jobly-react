@@ -1,165 +1,134 @@
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import JoblyApi from "../api";
+import UserContext from "../Authorization/UserContext";
 import { useNavigate } from 'react-router-dom';
 
-const UserProfile = () => {
-    const navigate = useNavigate();
+function UserProfile() {
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-    // Set initial state
-    const [formState, setFormState] = useState({
-        username: "",
-        password: "",
-        email: "",
-        firstName: "",
-        lastName: "",
-    });
-// Loading state to control form rendering
-    const [isLoading, setIsLoading] = useState(true);  
+  // Initialize form state with current user data
+  const [formData, setFormData] = useState({
+    username: currentUser.username,
+    firstName: currentUser.firstName,
+    lastName: currentUser.lastName,
+    email: currentUser.email,
+    password: "",  // Password input for changes
+  });
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userInfo = localStorage.getItem('currUser');
-                const parsedUserInfo = JSON.parse(userInfo);
+  const [saveConfirmed, setSaveConfirmed] = useState(false);  // Success message state
 
-                if (!parsedUserInfo?.authToken) {
-                    alert("You must log in first.");
-                    navigate("/login");
-                    return;
-                }
+  const handleChange = (evt) => {
+    const { name, value } = evt.target;
+    setFormData(f => ({
+      ...f,
+      [name]: value,
+    }));
+  };
 
-                const currentUser = await JoblyApi.getUser(parsedUserInfo.username);
-                console.log(currentUser)
-                const user = currentUser.user;
-// the empty strings are in case there isn't any info on on the form
-                setFormState({
-                    username: user.username || '',
-                    password: "",
-                    email: user.email || '',
-                    firstName: user.firstName || '',
-                    lastName: user.lastName || '',
-                });
+  const handleSubmit = async (evt) => {
+    evt.preventDefault();
+    
+    const { firstName, lastName, email, password } = formData;
+    const profileData = { firstName, lastName, email, password };
+    let updatedUser;
 
-                setIsLoading(false);  // Done loading, update state
-            } catch (error) {
-                console.error("Failed to fetch user data", error);
-                alert("Error fetching user data.");
-                setIsLoading(false);  // Done loading, even if there is an error
-            }
-        };
-
-        fetchUserData();
-    }, [navigate]);
-
-    // Dynamic handler to change the values in the form fields
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormState(state => ({
-            ...state,
-            [name]: value
-        }));
-    };
-
-    // Handle update user information
-    const handleUpdate = async (e) => {
-        e.preventDefault();
-        try {
-            const { username, password, email, firstName, lastName } = formState;
-            const updatedUser = await JoblyApi.UpdateUser(username, password, email, firstName, lastName);
-
-            if (updatedUser) {
-                setFormState({
-                    username: updatedUser.username,
-                    password: "", 
-                    email: updatedUser.email,
-                    firstName: updatedUser.firstName,
-                    lastName: updatedUser.lastName,
-                });
-
-                alert("Update successful!");
-                navigate("/user");
-            } else {
-                alert("Something went wrong while updating.");
-            }
-        } catch (error) {
-            console.error("Error updating user", error);
-            alert("Failed to update user.");
-        }
-    };
-
-    // Check if loading, and render loading message
-    if (isLoading) {
-        return <div>Loading...</div>;  // Optionally show a loading indicator
+    try {
+      // Save updated profile data via API
+      updatedUser = await JoblyApi.saveProfile(formData.username, profileData);
+      setFormData(f => ({ ...f, password: "" }));  // Clear password
+      setSaveConfirmed(true);  // Show success message
+      alert("successful update")
+      // Update the user context with the new data
+      setCurrentUser(updatedUser);
+    } catch (errors) {
+      alert("failed to update")  // Set errors if API call fails
+      return;
     }
+  };
+  const handleLogout = (e) => {
+    setCurrentUser(null)
+    localStorage.removeItem('currUser')
+    navigate('/')
+  }
+  return (
+    <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+      <h3>User Profile</h3>
+      <div className="card">
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            {/* Username Display */}
+            <div className="form-group">
+              <label>Username</label>
+              <p className="form-control-plaintext">{formData.username}</p>
+            </div>
 
-    return (
-        <div>
-            <h1>User Account</h1>
-            <Form onSubmit={handleUpdate}>
-                <Form.Group className="mb-3" controlId="formBasicUsername">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="username"
-                        value={formState.username}
-                        placeholder={formState.username || 'Enter Username'}
-                        onChange={handleChange}
-                        disabled // Username is not typically editable
-                    />
-                </Form.Group>
+            {/* First Name */}
+            <div className="form-group">
+              <label>First Name</label>
+              <input
+                name="firstName"
+                className="form-control"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+            </div>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        type="password"
-                        name="password"
-                        value={formState.password}
-                        placeholder="Leave blank to keep current password"
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+            {/* Last Name */}
+            <div className="form-group">
+              <label>Last Name</label>
+              <input
+                name="lastName"
+                className="form-control"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
 
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email Address</Form.Label>
-                    <Form.Control
-                        type="email"
-                        name="email"
-                        value={formState.email}
-                        placeholder={formState.email || 'Enter Email'}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+            {/* Email */}
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                name="email"
+                className="form-control"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
 
-                <Form.Group className="mb-3" controlId="formBasicFirstName">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="firstName"
-                        value={formState.firstName}
-                        placeholder={formState.firstName || 'Enter First Name'}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+            {/* Password (for confirming changes) */}
+            <div className="form-group">
+              <label>Confirm password to make changes:</label>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
 
-                <Form.Group className="mb-3" controlId="formBasicLastName">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="lastName"
-                        value={formState.lastName}
-                        placeholder={formState.lastName || 'Enter Last Name'}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                <Button variant="primary" type="submit">
-                    Update
-                </Button>
-            </Form>
+            
+            <button
+              className="btn btn-primary btn-block mt-4"
+              type="submit"
+            >
+              Save Changes
+            </button>
+          </form>
         </div>
-    );
-};
+      </div>
+
+      <div className="d-flex justify-content-center mt-4">
+            <button
+                  onClick={handleLogout}
+                  className="btn btn-danger btn-block mt-4"
+                  type="submit">
+                logout
+            </button>
+        </div>
+    </div>
+  );
+}
 
 export default UserProfile;

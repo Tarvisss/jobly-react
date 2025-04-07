@@ -1,5 +1,7 @@
 
 // to prevent prop drilling we'll use context to pass state/ values across the component tree.
-const UserContext = React.createContext();
+import { createContext } from 'react';
+
+const UserContext = createContext();
 
 export default UserContext;

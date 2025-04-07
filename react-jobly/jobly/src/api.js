@@ -65,10 +65,10 @@ static async getUser(username) {
   try {
       // Use the request helper method to make a GET request with the Authorization header
       const response = await this.request(`users/${username}`, {}, "get");
-      return response; // Return the user data from the API response
+      return response; 
   } catch (error) {
       console.error("Error fetching user data:", error);
-      throw error;  // Rethrow the error to be handled in the calling code
+      throw error;
   }
 }
 
@@ -95,7 +95,18 @@ static async LoginUser(username, password) {
   }
 }
 
+  
+static async saveProfile(username, data) {
+  try {
+    // Make a PATCH request to the backend to update the user's profile
+    const response = await this.request(`users/${username}`, data, "patch");
+    return response;  // Return the updated user data
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error;
+  } 
 
+  }
   static async SignUpUser(username, password, email, firstName, lastName) {
     try {
       // Ensure you're using the correct endpoint for registration
@@ -139,4 +150,4 @@ static async LoginUser(username, password) {
 }
 
 // for now, put token ("testuser" / "password" on class)
-JoblyApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
+// JoblyApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
