@@ -59,18 +59,42 @@ const BASE_URL ="http://localhost:3001";
   }
   
   }
-  static async getUser(username){
-    let res = await this.request('')
-  }
+// api.js
 
-  static async LoginUser(username, password){
-    try {
-      let data = await this.request("auth/token", { username, password}, "post")
-      return data.token
-    } catch (error) {
-      console.log(error)
-    }
+static async getUser(username) {
+  try {
+      // Use the request helper method to make a GET request with the Authorization header
+      const response = await this.request(`users/${username}`, {}, "get");
+      return response; // Return the user data from the API response
+  } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error;  // Rethrow the error to be handled in the calling code
   }
+}
+
+
+
+static async LoginUser(username, password) {
+  try {
+    // Make the API request to fetch the token
+    let data = await this.request("auth/token", { username, password }, "post");
+    
+    // Debugging: Log the entire response data
+    console.log("Login API Response:", data);
+
+    // Ensure the token exists in the response
+    if (data && data.token) {
+      return data.token;  // Return the token if available
+    } else {
+      console.error("Token not found in response data");
+      return null;
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    return null;
+  }
+}
+
 
   static async SignUpUser(username, password, email, firstName, lastName) {
     try {
@@ -115,6 +139,4 @@ const BASE_URL ="http://localhost:3001";
 }
 
 // for now, put token ("testuser" / "password" on class)
-JoblyApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZ" +
-    "SI6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE1OTI1OX0." +
-    "FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
+JoblyApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";

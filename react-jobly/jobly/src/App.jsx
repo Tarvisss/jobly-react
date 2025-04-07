@@ -9,6 +9,7 @@ import Signup from "./Authorization/SignUp"
 import JobPage from './Routing/JobPage'
 import Navigation from './Routing/NavbarComponent'
 import Companies from "./Routing/Companies"
+import UserProfile from "./Routing/UserProfile"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CompanyPage from "./Routing/CompanyPage"
 
@@ -21,6 +22,7 @@ function App() {
       <Navigation/>
       <Routes>
         <Route path='/' element={<HomePage/>}/>
+        <Route path='/users/:username' element={<UserProfile/>}/>
         <Route path='/jobs' element={<Jobs/>}/>
         <Route path='/companies' element={<Companies/>}/>
         <Route path='/companies/:handle' element={<CompanyPage/>}/>

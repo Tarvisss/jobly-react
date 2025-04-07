@@ -31,7 +31,7 @@ useEffect(() => {
                         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
                     }}
                     key={c.id}>
-                    {/* //here i've added a link to a single job page based off of the id. */}
+                    {/* //here i've added a link to a single job page based off of the company handle. */}
                         <Link to={`/companies/${c.handle}`}>{c.name}</Link>
                         <p><b>Description:</b> <br />{c.description}</p>
                     </div>

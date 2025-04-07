@@ -20,15 +20,28 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         const {username, password} = formState;
-        const loggedIntoken = await JoblyApi.LoginUser(username,password);
+        const loggedInToken = await JoblyApi.LoginUser(username,password);
+        
 //save token to local storage if user successfully logs in
-        if (loggedIntoken) {
-            localStorage.setItem("authToken", loggedIntoken.token);
-            navigate("/jobs");
-        } else {
-            redirect("/login")
-            alert("Incorrect Credentials")
-        }
+if (loggedInToken) {
+    const userData = {
+      authToken: loggedInToken,  // Store the token
+      username: username,        // Store the username
+    };
+  
+    // Debugging: Log the userData being saved
+    console.log("Saving to localStorage:", userData);
+  
+    // Save the user data as a stringified JSON object
+    localStorage.setItem("currUser", JSON.stringify(userData));
+  
+    // After saving, navigate to the jobs page
+    navigate("/jobs");
+  } else {
+    alert("Incorrect Credentials");
+    redirect("/login");
+  }
+  
 // send user to the jobs page after logging in.
         
     }

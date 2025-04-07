@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from "react";
 import JoblyApi from "../api";
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -29,12 +29,19 @@ const handleSignup = async (e) => {
     const { username, password, email, firstName, lastName } = formState;
     // Call the SignUpUser function with the required arguments
     const signupResponse = await JoblyApi.SignUpUser(username, password, email, firstName, lastName);
-    // if recieved store token in local storage
+    // if recieved store token in local storage then send the new user to the jobs page
     if (signupResponse) {
+        console.log(signupResponse)
         localStorage.setItem("authToken", signupResponse.token);
+
+
+        navigate("/jobs");
+    } else {
+        redirect("/signup")
+        alert("something went wrong")
     }
-    //send the new user to the jobs page
-    navigate("/jobs");
+    
+    
 }
 
     return (

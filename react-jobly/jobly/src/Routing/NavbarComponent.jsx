@@ -16,6 +16,7 @@ function NavbarComponent() {
             <Nav.Link as={Link} to="/login">Login</Nav.Link>
             <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
             <Nav.Link as={Link} to="/companies">Companies</Nav.Link>
+            {/* <Nav.Link as={Link} to={`/users/${username}`}>User Profile</Nav.Link> */}
           </Nav>
         </Container>
       </Navbar>
