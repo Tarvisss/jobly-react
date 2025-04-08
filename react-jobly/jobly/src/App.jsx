@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { Link, Routes, Route, BrowserRouter} from "react-router-dom"
 //additional components
 import HomePage from './Routing/HomePage'
-import Jobs from './Jobs'
+import Jobs from './Routing/Jobs'
 import Login from './Authorization/Login'
 import Signup from "./Authorization/SignUp"
 import JobPage from './Routing/JobPage'
@@ -15,10 +15,12 @@ import CompanyPage from "./Routing/CompanyPage"
 import UserContext from './Authorization/UserContext';
 import ProtectedRoute from "./Routing/ProtectedRoute"
 import NotFound from "./Routing/NotFound"
+//Styles
+import "./App.css"
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [applicationIds, setApplicationIds] = useState(new Set([]));
+  // const [applicationIds, setApplicationIds] = useState(new Set([]));
   useEffect(() => {
     const savedUser = localStorage.getItem("currUser");
     if (savedUser) {
@@ -49,7 +51,6 @@ function App() {
         <Route path='/companies' element={<ProtectedRoute elememt={<Companies/>}/>}/>
         <Route path='/companies/:handle' element={<ProtectedRoute elememt={<CompanyPage/>}/>}/>
         <Route path='/jobs/:id' element={<ProtectedRoute elememt={<JobPage/>}/>}/>
-        
       </Routes>
       </UserContext.Provider>
     </BrowserRouter>

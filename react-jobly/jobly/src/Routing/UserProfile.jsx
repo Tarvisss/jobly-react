@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import JoblyApi from "../api";
+import JoblyApi from "../ApiHelperClass/api";
 import UserContext from "../Authorization/UserContext";
 import { useNavigate } from 'react-router-dom';
 
@@ -50,6 +50,7 @@ function UserProfile() {
 
       // Update the global user context with the merged data to ensure the application reflects the latest profile information
       setCurrentUser(mergedUserData);
+      navigate("/jobs")
     } catch (errors) {
       alert("Failed to update profile. Please try again.");
     
@@ -57,17 +58,16 @@ function UserProfile() {
     }
 };
 
-
-
   const handleLogout = (e) => {
     setCurrentUser(null)
     localStorage.removeItem('currUser')
     navigate('/')
   }
+
   return (
     <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
-      <h3>User Profile</h3>
-      <div className="card">
+      <h1 style={{textAlign: "center", margin: "1.5rem"}}>User Profile</h1>
+      {/* <div className="card"> */}
         <div className="card-body">
           <form onSubmit={handleSubmit}>
             {/* Username Display */}
@@ -129,7 +129,7 @@ function UserProfile() {
               Save Changes
             </button>
           </form>
-        </div>
+        {/* </div> */}
       </div>
 
       <div className="d-flex justify-content-center mt-4">

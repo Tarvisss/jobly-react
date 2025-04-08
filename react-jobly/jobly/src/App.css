@@ -1,0 +1,26 @@
+body {
+    background-image: url('/abstract-pastel-blue-paint-brushstroke-textured-background.jpg');
+    /* background-color: rgb(230, 241, 241); */
+    align-content: center;
+    background-size: cover; /* Optional, to make the image cover the full viewport */
+    background-position: center; /* Optional, to center the image */
+}
+
+
+h1 {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    margin: 1.5rem ;
+    text-align: center;
+    text-shadow: .5px 1px 2px rgb(180, 186, 187);
+}
+
+/* Apply styles to Link and .ms-3 a */
+.ms-3 a {
+    text-decoration: none !important;
+    color: #007bff !important;
+}
+
+.ms-3 a:hover {
+    text-decoration: underline !important;
+    color: #0056b3 !important;
+}

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import JoblyApi from "../api";
+import JoblyApi from "../ApiHelperClass/api";
 import { Link } from "react-router-dom";
 
 const Companies = () => {
@@ -21,19 +21,23 @@ useEffect(() => {
                 gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", 
                 gap: "15px"
             }}>
-                {companies.length > 0 ? (companies.map((c) => (
+                {companies.length > 0 ? (companies.map((c, idx) => (
                     <div 
                     style={{
+                        textAlign: "center",
+                        backgroundColor: "#FFFD",
                         border: "1px solid #ccc", 
-                        padding: "20px", 
+                        padding: "15px", 
                         borderRadius: "8px", 
-                        width: "200px", 
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                        width: "275px", 
+                        boxShadow: "1px 4px 8px rgba(0, 0, 0, 0.1)"
                     }}
-                    key={c.id}>
+                    key={idx}>
                     {/* //here i've added a link to a single job page based off of the company handle. */}
-                        <Link to={`/companies/${c.handle}`}>{c.name}</Link>
-                        <p><b>Description:</b> <br />{c.description}</p>
+                        <Link to={`/companies/${c.handle}`} style={{textDecoration: "none"}}>{c.name}</Link>
+                        <hr />
+                        <p><b >Description:</b><br />{c.description}</p>
+                        <p><b >Handle:</b><br />{c.handle}</p>
                     </div>
                 ))
             ) : (
