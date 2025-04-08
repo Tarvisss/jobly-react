@@ -24,7 +24,9 @@ const JobPage = () => {
     if (job === null) {
         return <p>Loading job details...</p>;
     }
-
+    const handleApply = () => {
+        
+    }
     return (
         <div style={{
             

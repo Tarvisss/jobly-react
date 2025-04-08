@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import JoblyApi from "../api";
 import UserContext from "../Authorization/UserContext";
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 function UserProfile() {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
-
   // Initialize form state with current user data
   const [formData, setFormData] = useState({
     username: currentUser.username,
@@ -16,7 +15,6 @@ function UserProfile() {
     password: "",  // Password input for changes
   });
 
-  const [saveConfirmed, setSaveConfirmed] = useState(false);  // Success message state
 
   const handleChange = (evt) => {
     const { name, value } = evt.target;
@@ -27,25 +25,40 @@ function UserProfile() {
   };
 
   const handleSubmit = async (evt) => {
+    // Prevents the default form submission behavior, which causes a page reload
     evt.preventDefault();
     
+    // Destructure the necessary values from formData
     const { firstName, lastName, email, password } = formData;
-    const profileData = { firstName, lastName, email, password };
+    
+    // Initialize a variable to store the updated user data
     let updatedUser;
 
     try {
-      // Save updated profile data via API
-      updatedUser = await JoblyApi.saveProfile(formData.username, profileData);
-      setFormData(f => ({ ...f, password: "" }));  // Clear password
-      setSaveConfirmed(true);  // Show success message
-      alert("successful update")
-      // Update the user context with the new data
-      setCurrentUser(updatedUser);
+      // Attempt to update the user's profile using the UpdateUser API method
+      // The formData contains the current user's data, including username, password, email, firstName, and lastName
+      updatedUser = await JoblyApi.UpdateUser(formData.username, password, email, firstName, lastName);
+
+      // Clear the password field in the form after a successful update to prevent it from being sent in the future
+      setFormData(f => ({ ...f, password: "" })); 
+
+      alert("Profile updated successfully!");
+
+      // Merge the current user data with the updated data returned from the API
+      // This ensures the context holds the most up-to-date user info
+      const mergedUserData = { ...currentUser, ...updatedUser };
+
+      // Update the global user context with the merged data to ensure the application reflects the latest profile information
+      setCurrentUser(mergedUserData);
     } catch (errors) {
-      alert("failed to update")  // Set errors if API call fails
+      alert("Failed to update profile. Please try again.");
+    
       return;
     }
-  };
+};
+
+
+
   const handleLogout = (e) => {
     setCurrentUser(null)
     localStorage.removeItem('currUser')
@@ -127,6 +140,7 @@ function UserProfile() {
                 logout
             </button>
         </div>
+        
     </div>
   );
 }

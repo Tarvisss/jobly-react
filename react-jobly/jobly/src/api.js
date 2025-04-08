@@ -59,7 +59,7 @@ const BASE_URL ="http://localhost:3001";
   }
   
   }
-// api.js
+
 
 static async getUser(username) {
   try {
@@ -96,15 +96,20 @@ static async LoginUser(username, password) {
 }
 
   
-static async saveProfile(username, data) {
-  try {
-    // Make a PATCH request to the backend to update the user's profile
-    const response = await this.request(`users/${username}`, data, "patch");
-    return response;  // Return the updated user data
-  } catch (error) {
-    console.error("Error updating user profile:", error);
-    throw error;
-  } 
+  static async UpdateUser(username, password, email, firstName, lastName){
+    try {
+      const userData = {
+        password,
+        email,
+        firstName,
+        lastName
+      }
+      let user = await this.request(`users/${username}`, userData, "patch")
+      return user.user;
+    } catch (error) {
+      console.error("failed to update user", error)
+    }
+    
 
   }
   static async SignUpUser(username, password, email, firstName, lastName) {
@@ -135,6 +140,7 @@ static async saveProfile(username, data) {
       console.log(error)
     }  
   }
+  
   //finds a job based on id
   static async fetchJob(jobId) {
     try {

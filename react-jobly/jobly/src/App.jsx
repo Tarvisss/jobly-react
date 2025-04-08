@@ -12,11 +12,13 @@ import Companies from "./Routing/Companies"
 import UserProfile from "./Routing/UserProfile"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CompanyPage from "./Routing/CompanyPage"
-import UpdateUserPage from "./Routing/UpdateUser"
 import UserContext from './Authorization/UserContext';
+import ProtectedRoute from "./Routing/ProtectedRoute"
+import NotFound from "./Routing/NotFound"
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [applicationIds, setApplicationIds] = useState(new Set([]));
   useEffect(() => {
     const savedUser = localStorage.getItem("currUser");
     if (savedUser) {
@@ -38,14 +40,16 @@ function App() {
       <Navigation/>
       <Routes>
         <Route path='/' element={<HomePage/>}/>
-        <Route path='/users/:username' element={<UserProfile/>}/>
-        <Route path='/jobs' element={<Jobs/>}/>
-        <Route path='/companies' element={<Companies/>}/>
-        <Route path='/companies/:handle' element={<CompanyPage/>}/>
         <Route path='/Login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>
-        <Route path='/jobs/:id' element={<JobPage/>}/>
-        <Route path='/users/update/:username' element={<UpdateUserPage/>}/>
+        <Route path='*' element={<NotFound/>}/>
+        //Protected routes
+        <Route path='/users/:username' element={<ProtectedRoute elememt={<UserProfile/>}/>}/>
+        <Route path='/jobs' element={<ProtectedRoute elememt={<Jobs/>}/>}/>
+        <Route path='/companies' element={<ProtectedRoute elememt={<Companies/>}/>}/>
+        <Route path='/companies/:handle' element={<ProtectedRoute elememt={<CompanyPage/>}/>}/>
+        <Route path='/jobs/:id' element={<ProtectedRoute elememt={<JobPage/>}/>}/>
+        
       </Routes>
       </UserContext.Provider>
     </BrowserRouter>
