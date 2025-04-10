@@ -2,14 +2,17 @@ import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import UserContext from "../Authorization/UserContext";
 
-const ProtectedRoute = ( {elememt}) => {
-    const { currentUser, setCurrentUser } = useContext(UserContext);
+// Update ProtectedRoute to expect children instead of a prop like 'element'
+const ProtectedRoute = ({ children }) => {
+    const { currentUser } = useContext(UserContext);
 
-    if(!currentUser) {
-        return <Navigate to="/"/> 
+    // If there's no currentUser, redirect to the home page
+    if (!currentUser) {
+        return <Navigate to="/" />;
     }
 
-    return elememt;
-}
+    // Otherwise, render the children (which are the protected components)
+    return children;
+};
 
 export default ProtectedRoute;

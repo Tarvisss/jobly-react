@@ -1,0 +1,9 @@
+.ms-3 a {
+    text-decoration: none !important;
+    color: #007bff !important;
+}
+
+.ms-3 a:hover {
+    text-decoration: underline !important;
+    color: #0056b3 !important;
+}

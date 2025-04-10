@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
 import JoblyApi from "../ApiHelperClass/api";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../Authorization/UserContext";
 
 
 const JobPage = () => {
+    const { applicationIds, setApplicationIds } = useContext(UserContext);
+    
     const navigate = useNavigate();
     const [job, setJob] = useState(null);
     const { id } = useParams();
@@ -22,12 +25,28 @@ const JobPage = () => {
         getJob();
     },[id])
 
-    if (job === null) {
-        return <p>Loading job details...</p>;
-    }
     const handleClick = () => {
         navigate("/jobs")
     }
+
+    const handleApply = async () => {
+        try {
+            await JoblyApi.applyForJob(job.id);
+            setApplicationIds((prev) => new Set([...prev, job.id]));
+            alert("You applied!");
+        } catch (error) {
+            console.error("Application failed", error)
+        }
+        
+      };
+      
+    if (job === null) {
+        return <p>Loading job details...</p>;
+    }
+
+    const hasApplied = applicationIds.has(job.id);
+   
+
     return (
         <div
             style={{
@@ -59,8 +78,12 @@ const JobPage = () => {
                         gap: "10px",
                     }}
                 >
-                    <button onClick={handleClick} className="btn btn-primary btn-block mt-4">
-                        Apply
+                    <button 
+                        onClick={handleApply} 
+                        className="btn btn-primary btn-block mt-4"
+                        disabled={hasApplied}
+                        >
+                        {hasApplied ? "Already Applied" : "Apply"}
                     </button>
                     <button onClick={handleClick} className="btn btn-primary btn-block mt-4">
                         Back to job listings

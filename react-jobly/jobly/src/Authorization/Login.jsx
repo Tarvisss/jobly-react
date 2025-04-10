@@ -11,12 +11,11 @@ const Login = () => {
     const {setCurrentUser} = useContext(UserContext)
     const [formState, setFormState] = useState({ username: "", password: ""})
 
-    const handlePassWordChange = (e) => {
-        setFormState(state => ({ ...state, password: e.target.value}));
+    const handleChange = (e) => {
+        const {name, value} = e.target
+        setFormState(state => ({ ...state, [name]: value}));
     }
-    const handleUsernameChange = (e) => {
-        setFormState(state => ({ ...state, username: e.target.value}));
-    }
+    
 // Now the handleLogin function will use the custom method from the helper functions imported as api.js
 //
     const handleLogin = async (e) => {
@@ -55,7 +54,7 @@ if (loggedInToken) {
                     name="username" 
                     value={formState.username}
                     placeholder="Enter Username" 
-                    onChange={handleUsernameChange}/>
+                    onChange={handleChange}/>
                
                 </Form.Group>
 
@@ -66,7 +65,7 @@ if (loggedInToken) {
                     name="password" 
                     value={formState.password}
                     placeholder="Password"
-                    onChange={handlePassWordChange} />
+                    onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">
                 <Form.Text className="text-muted">

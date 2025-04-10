@@ -4,8 +4,9 @@ import UserContext from "../Authorization/UserContext";
 import { useNavigate } from 'react-router-dom';
 
 function UserProfile() {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser, setCurrentUser, applicationIds, setApplicationIds } = useContext(UserContext);
   const navigate = useNavigate();
+  const [jobIds, setJobIds] = useState({})
   // Initialize form state with current user data
   const [formData, setFormData] = useState({
     username: currentUser.username,
@@ -63,6 +64,8 @@ function UserProfile() {
     localStorage.removeItem('currUser')
     navigate('/')
   }
+
+
 
   return (
     <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
@@ -140,7 +143,7 @@ function UserProfile() {
                 logout
             </button>
         </div>
-        
+     
     </div>
   );
 }

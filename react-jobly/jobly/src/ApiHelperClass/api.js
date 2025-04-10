@@ -60,11 +60,34 @@ const BASE_URL ="http://localhost:3001";
   
   }
 
+static async applyForJob(jobId) {
+  try {
+    const currentUser = localStorage.getItem("currUser")
+    const userObject = JSON.parse(currentUser);
+    const { username } = userObject;
+    let response = await this.request(`users/${username}/jobs/${jobId}`, {}, "post");
+    
+    return response;
+  } catch (error) {
+    console.debug(error);
+  }
+  
+}
 
+static async getAppliedJobs(username){
+  try {
+    const response = await this.request(`users/${username}`, {}, "get")
+    
+    return response.user.applications
+  } catch (error) {
+    
+  }
+}
 static async getUser(username) {
   try {
       // Use the request helper method to make a GET request with the Authorization header
       const response = await this.request(`users/${username}`, {}, "get");
+      console.log(response)
       return response; 
   } catch (error) {
       console.error("Error fetching user data:", error);

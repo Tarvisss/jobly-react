@@ -17,28 +17,46 @@ import ProtectedRoute from "./Routing/ProtectedRoute"
 import NotFound from "./Routing/NotFound"
 //Styles
 import "./App.css"
+import JoblyApi from "./ApiHelperClass/api"
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  // const [applicationIds, setApplicationIds] = useState(new Set([]));
+  const [applicationIds, setApplicationIds] = useState(new Set([]));
+  
   useEffect(() => {
     const savedUser = localStorage.getItem("currUser");
     if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser)
+
+      setCurrentUser(parsedUser);
+
+      const fetchAppliedJobs = async () => {
+        try {
+          const response = await JoblyApi.getAppliedJobs(parsedUser.username)
+          setApplicationIds(new Set(response.applications));
+        } catch (error) {
+          console.error("Error Fetching Jobs")
+        }
+      }
+      fetchAppliedJobs();
     }
   }, []);
 
-  // Update the user in localStorage whenever currentUser changes
+  // Update the user info and applied jobs in localStorage whenever currentUser changes
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem("currUser", JSON.stringify(currentUser));
     }
-  }, [currentUser]);
+
+    if(applicationIds) {
+      localStorage.setItem('applicationsIds', JSON.stringify([...applicationIds]));
+    }
+  }, [currentUser, applicationIds]);
 
   return (
 <div>
     <BrowserRouter>
-    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+    <UserContext.Provider value={{ currentUser, setCurrentUser, applicationIds, setApplicationIds}}>
       <Navigation/>
       <Routes>
         <Route path='/' element={<HomePage/>}/>
@@ -46,11 +64,13 @@ function App() {
         <Route path='/signup' element={<Signup/>}/>
         <Route path='*' element={<NotFound/>}/>
         //Protected routes
-        <Route path='/users/:username' element={<ProtectedRoute elememt={<UserProfile/>}/>}/>
-        <Route path='/jobs' element={<ProtectedRoute elememt={<Jobs/>}/>}/>
-        <Route path='/companies' element={<ProtectedRoute elememt={<Companies/>}/>}/>
-        <Route path='/companies/:handle' element={<ProtectedRoute elememt={<CompanyPage/>}/>}/>
-        <Route path='/jobs/:id' element={<ProtectedRoute elememt={<JobPage/>}/>}/>
+        <Route path='/users/:username' element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path='/jobs' element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+        <Route path='/companies' element={<ProtectedRoute><Companies /></ProtectedRoute>} />
+        <Route path='/companies/:handle' element={<ProtectedRoute><CompanyPage /></ProtectedRoute>} />
+        <Route path='/jobs/:id' element={<ProtectedRoute><JobPage /></ProtectedRoute>} />
+
+
       </Routes>
       </UserContext.Provider>
     </BrowserRouter>
