@@ -77,7 +77,6 @@ static async applyForJob(jobId) {
 static async getAppliedJobs(username){
   try {
     const response = await this.request(`users/${username}`, {}, "get")
-    
     return response.user.applications
   } catch (error) {
     
