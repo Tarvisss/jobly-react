@@ -1,42 +1,56 @@
 import axios from "axios";
 
-const BASE_URL ="http://localhost:3001";
-// process.env.REACT_APP_BASE_URL || 
+// Use Vite's env variables
+const BASE_URL = import.meta.env.VITE_BASE_URL || "https://ptngpjygkufehwkqtgdk.supabase.co";
+const apiKey = import.meta.env.VITE_API_KEY;
 
-/** API Class.
- *
- * Static class tying together methods used to get/send to to the API.
- * There shouldn't be any frontend-specific stuff here, and there shouldn't
- * be any API-aware stuff elsewhere in the frontend.
- *
+/**
+ * API Class to interact with the Supabase API.
  */
-// export the Api helper
- export default class JoblyApi {
-  // the token for interactive with the API will be stored here.
+export default class JoblyApi {
   static token;
 
+  // Method to set the token (useful if token changes during the session)
+  static setToken(newToken) {
+    this.token = newToken;
+  }
+
+  // General API request handler
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
-    //there are multiple ways to pass an authorization token, this is how you pass it in the header.
-    //this has been provided to show you another way to pass the token. you are only expected to read this code for this project.
-    const url = `${BASE_URL}/${endpoint}`;
-    const headers = { Authorization: `Bearer ${JoblyApi.token}` };
-    const params = (method === "get")
-        ? data
-        : {};
+    // Construct the URL for the API endpoint
+    const url = `${BASE_URL}/rest/v1/${endpoint}`;
+
+    // Set headers (both the authorization token and the API key)
+    const headers = {
+      'Authorization': `Bearer ${JoblyApi.token}`,
+      'apiKey': apiKey,
+      'Content-Type': 'application/json', // Include content-type for POST/PUT requests
+    };
+
+    // For GET requests, data will be passed as params
+    const params = (method === "get") ? data : {};
 
     try {
-      return (await axios({ url, method, data, params, headers })).data;
+      // Make the API request using axios
+      const response = await axios({
+        url,
+        method,
+        data,
+        params,
+        headers,
+      });
+      return response.data; // Return the data from the response
     } catch (err) {
       console.error("API Error:", err.response);
-      let message = err.response.data.error.message;
-      throw Array.isArray(message) ? message : [message];
+      const message = err.response?.data?.error?.message || "Unknown error";
+      throw Array.isArray(message) ? message : [message]; // Handle errors gracefully
     }
   }
-
   // Individual API routes
-
+ 
+  
   /** Get details on a company by handle. */
 
   static async getCompany(handle) {

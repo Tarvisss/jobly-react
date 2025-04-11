@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function UserProfile() {
   const { currentUser, setCurrentUser, applicationIds, setApplicationIds } = useContext(UserContext);
   const navigate = useNavigate();
-  const [jobIds, setJobIds] = useState({})
+ 
   // Initialize form state with current user data
   const [formData, setFormData] = useState({
     username: currentUser.username,
