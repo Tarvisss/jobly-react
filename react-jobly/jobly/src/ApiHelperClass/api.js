@@ -1,8 +1,9 @@
 import axios from "axios";
 
 // Use Vite's env variables
-const BASE_URL = import.meta.env.VITE_BASE_URL || "https://ptngpjygkufehwkqtgdk.supabase.co";
-const apiKey = import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL || "http://localhost:3001";
+
+// const apiKey = import.meta.env.VITE_API_KEY;
 
 /**
  * API Class to interact with the Supabase API.
@@ -16,38 +17,35 @@ export default class JoblyApi {
   }
 
   // General API request handler
-  static async request(endpoint, data = {}, method = "get") {
-    console.debug("API Call:", endpoint, data, method);
+  // General API request handler
+static async request(endpoint, data = {}, method = "get") {
+  console.debug("API Call:", endpoint, data, method);
 
-    // Construct the URL for the API endpoint
-    const url = `${BASE_URL}/rest/v1/${endpoint}`;
+  const url = `${BASE_URL}/${endpoint}`; // <-- FIXED
 
-    // Set headers (both the authorization token and the API key)
-    const headers = {
-      'Authorization': `Bearer ${JoblyApi.token}`,
-      'apiKey': apiKey,
-      'Content-Type': 'application/json', // Include content-type for POST/PUT requests
-    };
+  const headers = {
+    'Authorization': `Bearer ${JoblyApi.token}`,
+    'Content-Type': 'application/json',
+  };
 
-    // For GET requests, data will be passed as params
-    const params = (method === "get") ? data : {};
+  const params = (method === "get") ? data : {};
 
-    try {
-      // Make the API request using axios
-      const response = await axios({
-        url,
-        method,
-        data,
-        params,
-        headers,
-      });
-      return response.data; // Return the data from the response
-    } catch (err) {
-      console.error("API Error:", err.response);
-      const message = err.response?.data?.error?.message || "Unknown error";
-      throw Array.isArray(message) ? message : [message]; // Handle errors gracefully
-    }
+  try {
+    const response = await axios({
+      url,
+      method,
+      data,
+      params,
+      headers,
+    });
+    return response.data;
+  } catch (err) {
+    console.error("API Error:", err.response);
+    const message = err.response?.data?.error?.message || "Unknown error";
+    throw Array.isArray(message) ? message : [message];
   }
+}
+
   // Individual API routes
  
   
